@@ -5,15 +5,17 @@ TILESIZE  = 50
 MAPWIDTH  = 5
 MAPHEIGHT = 5
 # Constants for map items
-NONE  = 0
+NONE = 0
 WALL = 1
 PACM = 2
+RED  = 3
+
 # Map representation
 gameMap = [
     [WALL, WALL, WALL, WALL, WALL],
     [WALL, PACM, NONE, NONE, WALL],
     [WALL, NONE, WALL, NONE, WALL],
-    [WALL, NONE, NONE, NONE, WALL],
+    [WALL, NONE, NONE,  RED, WALL],
     [WALL, WALL, WALL, WALL, WALL]
 ]
 
@@ -30,13 +32,8 @@ def move(posX, posY, offsetX, offsetY):
     gameMap[posY][posX] = NONE
     gameMap[posY+offsetY][posX+offsetX] = PACM
 
+# Main game logic
 def main():
-    """
-    Main game logic.
-     in: none
-     out: game display
-    """
-    
     pygame.init()
     # Set game title
     pygame.display.set_caption("Pakman")
@@ -44,7 +41,8 @@ def main():
     timing = pygame.time.Clock()
 
     # Load assets
-    pacman=pygame.transform.scale(pygame.image.load('Assets/pacman.png'),(TILESIZE,TILESIZE))
+    pacman = pygame.transform.scale(pygame.image.load('Assets/pacman.png'),(TILESIZE,TILESIZE))
+    ghostRed = pygame.transform.scale(pygame.image.load('Assets/red.png'),(TILESIZE,TILESIZE))
 
     # Display game screen
     disp = pygame.display.set_mode((MAPWIDTH*TILESIZE,MAPHEIGHT*TILESIZE))
@@ -93,7 +91,8 @@ def main():
                     pygame.draw.rect(disp, (0,0,255), (column*TILESIZE,row*TILESIZE,TILESIZE,TILESIZE))
                 elif gameMap[row][column] == PACM:
                     disp.blit(pacman,(column*TILESIZE,row*TILESIZE))      
-
+                elif gameMap[row][column] == RED:
+                    disp.blit(ghostRed,(column*TILESIZE,row*TILESIZE)) 
 
         pygame.display.flip()
 
