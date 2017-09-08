@@ -51,7 +51,8 @@ def main():
     quit = 0
     posX = 1
     posY = 1
-
+    angle=0
+    pacman2=pacman
     while (quit != 1):
 
         # Check for events
@@ -68,17 +69,25 @@ def main():
                 if event.key == pygame.K_UP:
                     if isValidMove(posX, posY-1):
                         move(posX,posY,0,-1)
+                        angle=90
+                        pacman2=pygame.transform.rotate(pacman,angle)
                         posY -= 1
                 if event.key == pygame.K_DOWN:
                     if isValidMove(posX, posY+1):
                         move(posX,posY,0,1)
+                        angle=-90
+                        pacman2=pygame.transform.rotate(pacman,angle)
                         posY += 1
                 if event.key == pygame.K_LEFT:
                     if isValidMove(posX-1, posY):
                         move(posX,posY,-1,0)
+                        angle=180
+                        pacman2=pygame.transform.rotate(pacman,angle)
                         posX -= 1
                 if event.key == pygame.K_RIGHT:
                     if isValidMove(posX+1, posY):
+                        angle=0
+                        pacman2=pygame.transform.rotate(pacman,angle)
                         move(posX,posY,1,0)
                         posX += 1
 
@@ -90,7 +99,7 @@ def main():
                 elif gameMap[row][column] == WALL:            
                     pygame.draw.rect(disp, (0,0,255), (column*TILESIZE,row*TILESIZE,TILESIZE,TILESIZE))
                 elif gameMap[row][column] == PACM:
-                    disp.blit(pacman,(column*TILESIZE,row*TILESIZE))      
+                    disp.blit(pacman2,(column*TILESIZE,row*TILESIZE))      
                 elif gameMap[row][column] == RED:
                     disp.blit(ghostRed,(column*TILESIZE,row*TILESIZE)) 
 
