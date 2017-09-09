@@ -1,23 +1,45 @@
 import pygame
 
-# Map dimensions
-TILESIZE  = 50
-MAPWIDTH  = 5
-MAPHEIGHT = 5
 # Constants for map items
 NONE = 0
 WALL = 1
 PACM = 2
 RED  = 3
+ORNG = 4
+PINK = 5
+BLUE = 6
 
 # Map representation
 gameMap = [
-    [WALL, WALL, WALL, WALL, WALL],
-    [WALL, PACM, NONE, NONE, WALL],
-    [WALL, NONE, WALL, NONE, WALL],
-    [WALL, NONE, NONE,  RED, WALL],
-    [WALL, WALL, WALL, WALL, WALL]
+    [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
+    [WALL, PACM, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, WALL],
+    [WALL, NONE, WALL, WALL, WALL, NONE, NONE, WALL, NONE, NONE, WALL, WALL, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, ORNG, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, BLUE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, NONE, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, NONE, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, WALL, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, NONE, NONE, NONE, WALL, NONE, WALL],
+    [WALL, NONE, WALL, WALL, WALL, NONE, NONE, WALL, NONE, NONE, WALL, WALL, WALL, NONE, WALL],
+    [WALL, NONE, NONE, RED,  NONE, NONE, NONE, NONE, NONE, NONE, NONE, PINK, NONE, NONE, WALL],
+    [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL]
 ]
+
+# Map dimensions
+TILESIZE  = 50
+MAPWIDTH  = len(gameMap[0])
+MAPHEIGHT = len(gameMap)
 
 # Check for valid movement (tile must be empty)
 def isValidMove(posX, posY):
@@ -43,6 +65,9 @@ def main():
     # Load assets
     pacman = pygame.transform.scale(pygame.image.load('Assets/pacman.png'),(TILESIZE,TILESIZE))
     ghostRed = pygame.transform.scale(pygame.image.load('Assets/red.png'),(TILESIZE,TILESIZE))
+    ghostOrange = pygame.transform.scale(pygame.image.load('Assets/orange.png'),(TILESIZE,TILESIZE))
+    ghostBlue = pygame.transform.scale(pygame.image.load('Assets/blue.png'),(TILESIZE,TILESIZE))
+    ghostPink = pygame.transform.scale(pygame.image.load('Assets/pink.png'),(TILESIZE,TILESIZE))
 
     # Display game screen
     disp = pygame.display.set_mode((MAPWIDTH*TILESIZE,MAPHEIGHT*TILESIZE))
@@ -93,15 +118,25 @@ def main():
 
         # Draw the map
         for row in range(MAPHEIGHT):
+            offsetRow = row*TILESIZE
+            
             for column in range(MAPWIDTH):
+                offsetCol = column*TILESIZE
+
                 if gameMap[row][column] == NONE:
-                    pygame.draw.rect(disp, (0,0,0), (column*TILESIZE,row*TILESIZE,TILESIZE,TILESIZE))
+                    pygame.draw.rect(disp, (0,0,0), (offsetCol,offsetRow,TILESIZE,TILESIZE))
                 elif gameMap[row][column] == WALL:            
-                    pygame.draw.rect(disp, (0,0,255), (column*TILESIZE,row*TILESIZE,TILESIZE,TILESIZE))
+                    pygame.draw.rect(disp, (0,0,255), (offsetCol,offsetRow,TILESIZE,TILESIZE))
                 elif gameMap[row][column] == PACM:
-                    disp.blit(pacman2,(column*TILESIZE,row*TILESIZE))      
+                    disp.blit(pacman2,(offsetCol,offsetRow))      
                 elif gameMap[row][column] == RED:
-                    disp.blit(ghostRed,(column*TILESIZE,row*TILESIZE)) 
+                    disp.blit(ghostRed,(offsetCol,offsetRow))
+                elif gameMap[row][column] == ORNG:
+                    disp.blit(ghostOrange,(offsetCol,offsetRow))
+                elif gameMap[row][column] == BLUE:
+                    disp.blit(ghostBlue,(offsetCol,offsetRow))
+                elif gameMap[row][column] == PINK:
+                    disp.blit(ghostPink,(offsetCol,offsetRow)) 
 
         pygame.display.flip()
 
