@@ -37,7 +37,7 @@ gameMap = [
 ]
 
 # Map dimensions
-TILESIZE  = 50
+TILESIZE  = 25
 MAPWIDTH  = len(gameMap[0])
 MAPHEIGHT = len(gameMap)
 
@@ -48,11 +48,25 @@ def isValidMove(posX, posY):
     else:
         return True
 
-# Move an item on the map
-def move(posX, posY, offsetX, offsetY):
-    temp = gameMap[posY][posX]
-    gameMap[posY][posX] = NONE
-    gameMap[posY+offsetY][posX+offsetX] = PACM
+class Pacman:
+	def __init__(self, x, y, surface, sprite):
+		self.x = x
+		self.y = y
+		self.angle = 0
+		self.surface = surface
+		self.sprite = pygame.transform.scale(pygame.image.load(sprite),(TILESIZE,TILESIZE))
+
+	def draw(self):
+		self.surface.blit(self.sprite,(self.x*TILESIZE,self.y*TILESIZE))
+
+	def move(self, offsetX, offsetY, angle):
+		if isValidMove(self.x + offsetX, self.y + offsetY):
+			temp = gameMap[self.y][self.x]
+			gameMap[self.y][self.x] = NONE
+			self.x += offsetX
+			self.y += offsetY
+			gameMap[self.y][self.x] = temp
+			#self.sprite = pygame.transform.rotate(self.sprite,angle)
 
 # Main game logic
 def main():
@@ -62,27 +76,24 @@ def main():
     # Initialize game clock
     timing = pygame.time.Clock()
 
+    # Display game screen
+    disp = pygame.display.set_mode((MAPWIDTH*TILESIZE,MAPHEIGHT*TILESIZE))
+
     # Load assets
-    pacman = pygame.transform.scale(pygame.image.load('Assets/pacman.png'),(TILESIZE,TILESIZE))
+    pacman = Pacman(1,1,disp,'Assets/pacman.png')
     ghostRed = pygame.transform.scale(pygame.image.load('Assets/red.png'),(TILESIZE,TILESIZE))
     ghostOrange = pygame.transform.scale(pygame.image.load('Assets/orange.png'),(TILESIZE,TILESIZE))
     ghostBlue = pygame.transform.scale(pygame.image.load('Assets/blue.png'),(TILESIZE,TILESIZE))
     ghostPink = pygame.transform.scale(pygame.image.load('Assets/pink.png'),(TILESIZE,TILESIZE))
 
-    # Display game screen
-    disp = pygame.display.set_mode((MAPWIDTH*TILESIZE,MAPHEIGHT*TILESIZE))
-
     # Initialize game variables
     quit = 0
-    posX = 1
-    posY = 1
-    angle=0
-    pacman2=pacman
+
     while (quit != 1):
 
         # Check for events
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: 
+            if event.type == pygame.QUIT:  
                 sys.exit()
 
             # Keyboard events
@@ -92,43 +103,25 @@ def main():
 
                 # Movement logic
                 if event.key == pygame.K_UP:
-                    if isValidMove(posX, posY-1):
-                        move(posX,posY,0,-1)
-                        angle=90
-                        pacman2=pygame.transform.rotate(pacman,angle)
-                        posY -= 1
+                    pacman.move(0,-1,90)
                 if event.key == pygame.K_DOWN:
-                    if isValidMove(posX, posY+1):
-                        move(posX,posY,0,1)
-                        angle=-90
-                        pacman2=pygame.transform.rotate(pacman,angle)
-                        posY += 1
+                    pacman.move(0,1,-90)
                 if event.key == pygame.K_LEFT:
-                    if isValidMove(posX-1, posY):
-                        move(posX,posY,-1,0)
-                        angle=180
-                        pacman2=pygame.transform.rotate(pacman,angle)
-                        posX -= 1
+                    pacman.move(-1,0,180)
                 if event.key == pygame.K_RIGHT:
-                    if isValidMove(posX+1, posY):
-                        angle=0
-                        pacman2=pygame.transform.rotate(pacman,angle)
-                        move(posX,posY,1,0)
-                        posX += 1
+                    pacman.move(1,0,0)
 
         # Draw the map
+        disp.fill((0,0,0))
+
         for row in range(MAPHEIGHT):
             offsetRow = row*TILESIZE
             
             for column in range(MAPWIDTH):
                 offsetCol = column*TILESIZE
 
-                if gameMap[row][column] == NONE:
-                    pygame.draw.rect(disp, (0,0,0), (offsetCol,offsetRow,TILESIZE,TILESIZE))
-                elif gameMap[row][column] == WALL:            
-                    pygame.draw.rect(disp, (0,0,255), (offsetCol,offsetRow,TILESIZE,TILESIZE))
-                elif gameMap[row][column] == PACM:
-                    disp.blit(pacman2,(offsetCol,offsetRow))      
+                if gameMap[row][column] == WALL:            
+                    pygame.draw.rect(disp, (0,0,255), (offsetCol,offsetRow,TILESIZE,TILESIZE))     
                 elif gameMap[row][column] == RED:
                     disp.blit(ghostRed,(offsetCol,offsetRow))
                 elif gameMap[row][column] == ORNG:
@@ -138,6 +131,7 @@ def main():
                 elif gameMap[row][column] == PINK:
                     disp.blit(ghostPink,(offsetCol,offsetRow)) 
 
-        pygame.display.flip()
+        pacman.draw()
+        pygame.display.update()
 
 main()
