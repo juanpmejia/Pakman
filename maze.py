@@ -10,8 +10,7 @@ BLUE = 6
 class Maze:
 
     # Initialization
-    def __init__(self, size):
-        self.size = size
+    def __init__(self):
         self.gameMap = [
             [WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL, WALL],
             [WALL, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, WALL],
