@@ -10,11 +10,12 @@ COLOR_BLUE = (0,0,255)
 
 # Main game logic
 def main():
+
     pygame.init()
     # Set game title
     pygame.display.set_caption("Pakman")
     # Initialize game variables
-    timing = pygame.time.Clock()
+    clock = pygame.time.Clock()
     quit = 0
 
     # Initialize game screen
@@ -42,31 +43,29 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  
                 quit = 1
-
-            # Keyboard events
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     quit = 1
 
-                # Movement logic
-                else:                         
-                    x = y = 0    
-                    currPos = pacman.getPos()
+        # Player movement logic
+        x = y = 0    
+        currPos = pacman.getPos()
+        pressed = pygame.key.get_pressed()                     
 
-                    if event.key == pygame.K_UP:
-                        y = -1
-                    elif event.key == pygame.K_DOWN:
-                        y = 1
-                    elif event.key == pygame.K_LEFT:
-                        x = -1
-                    elif event.key == pygame.K_RIGHT:
-                        x = 1
-                    
-                    if ((x != 0 or y != 0) and maze.isEmptyTile(currPos[0] + x, currPos[1] + y)):
-                        maze.setTile(NONE, currPos[0], currPos[1])
-                        pacman.move(x,y)
-                        currPos = pacman.getPos()
-                        maze.setTile(PACM, currPos[0], currPos[1])
+        if pressed[pygame.K_UP]:
+            y = -1
+        elif pressed[pygame.K_DOWN]:
+            y = 1
+        elif pressed[pygame.K_LEFT]:
+            x = -1
+        elif pressed[pygame.K_RIGHT]:
+            x = 1
+                
+        if ((x != 0 or y != 0) and maze.isEmptyTile(currPos[0] + x, currPos[1] + y)):
+            maze.setTile(NONE, currPos[0], currPos[1])
+            pacman.move(x,y)
+            currPos = pacman.getPos()
+            maze.setTile(PACM, currPos[0], currPos[1])
     
         # Draw the map
         disp.fill(COLOR_BLACK)
@@ -85,6 +84,9 @@ def main():
         ghostOrange.draw()
 
         pygame.display.update()
+
+        # Cinematic 10 fps
+        clock.tick(10)
 
 main()
 pygame.quit()
