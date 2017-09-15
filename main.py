@@ -13,10 +13,11 @@ def main():
     pygame.init()
     # Set game title
     pygame.display.set_caption("Pakman")
-    # Initialize game clock
+    # Initialize game variables
     timing = pygame.time.Clock()
+    quit = 0
 
-    # Display game screen
+    # Initialize game screen
     maze = Maze(25)
     tileSize = maze.getSize()
     disp = pygame.display.set_mode((maze.getWidth()*tileSize,maze.getHeight()*tileSize))
@@ -29,14 +30,11 @@ def main():
     ghostOrange = Ghost(4,5,ORNG,disp,'Assets/orange.png',tileSize)
 
     # Update map positions
-    maze.setTile(1,1,PACM)
-    maze.setTile(3,21,RED)
-    maze.setTile(8,6,BLUE)
-    maze.setTile(11,21,PINK)
-    maze.setTile(4,5,ORNG)
-
-    # Initialize game variables
-    quit = 0
+    maze.setTile(PACM, pacman.getPos()[0], pacman.getPos()[1])
+    maze.setTile(RED, ghostRed.getPos()[0], ghostRed.getPos()[1])
+    maze.setTile(BLUE, ghostBlue.getPos()[0], ghostBlue.getPos()[1])
+    maze.setTile(PINK, ghostPink.getPos()[0], ghostPink.getPos()[1])
+    maze.setTile(ORNG, ghostOrange.getPos()[0], ghostOrange.getPos()[1])
 
     while (quit != 1):
 
@@ -50,8 +48,8 @@ def main():
                 if event.key == pygame.K_q:
                     quit = 1
 
+                # Movement logic
                 else:                         
-                    # Movement logic
                     x = y = 0    
                     currPos = pacman.getPos()
 
@@ -65,14 +63,13 @@ def main():
                         x = 1
                     
                     if ((x != 0 or y != 0) and maze.isEmptyTile(currPos[0] + x, currPos[1] + y)):
-                        maze.setTile(currPos[0], currPos[1], NONE)
+                        maze.setTile(NONE, currPos[0], currPos[1])
                         pacman.move(x,y)
                         currPos = pacman.getPos()
-                        maze.setTile(currPos[0], currPos[1], PACM)
+                        maze.setTile(PACM, currPos[0], currPos[1])
     
         # Draw the map
         disp.fill(COLOR_BLACK)
-
         for row in range(maze.getHeight()):
             offsetRow = row*tileSize            
             for column in range(maze.getWidth()):
@@ -80,11 +77,13 @@ def main():
                 if maze.getTile(column, row) == WALL:            
                     pygame.draw.rect(disp, COLOR_BLUE, (offsetCol,offsetRow,tileSize,tileSize))     
 
+        # Draw the sprites
         pacman.draw()
         ghostRed.draw()
         ghostBlue.draw()
         ghostPink.draw()
         ghostOrange.draw()
+
         pygame.display.update()
 
 main()

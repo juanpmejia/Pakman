@@ -8,6 +8,8 @@ PINK = 5
 BLUE = 6
 
 class Maze:
+
+    # Initialization
     def __init__(self, size):
         self.size = size
         self.gameMap = [
@@ -38,19 +40,24 @@ class Maze:
         self.height = len(self.gameMap)
         self.width  = len(self.gameMap[0])
 
+    # Get the size in the Y axis
     def getHeight(self):
         return self.height
 
+    # Get the size in the X axis
     def getWidth(self):
         return self.width
 
+    # Get the tilesize
     def getSize(self):
         return self.size
 
+    # Get the contents of a tile
     def getTile(self, x, y):
         return self.gameMap[y][x]
 
-    def setTile(self, x, y, item):
+    # Assign an item to a tile
+    def setTile(self, item, x, y):
         self.gameMap[y][x] = item
 
     # Check if a tile has nothing in it
