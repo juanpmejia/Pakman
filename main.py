@@ -8,6 +8,30 @@ from ghost import *
 COLOR_BLACK = (0,0,0)
 COLOR_BLUE = (0,0,255)
 
+# Movement logic for the orange ghost
+def moveOrange(ghostOrange, pacman, maze):
+    currPos = ghostOrange.getPos()
+    targetPos = pacman.getPos()
+    dirX = dirY = 0
+
+    if currPos[0] == targetPos[0]:
+        if currPos[1] - targetPos[1] < -1:
+            dirY += 1
+        elif currPos[1] - targetPos[1] > 1:
+            dirY -= 1
+
+    elif currPos[1] == targetPos[1]:
+        if currPos[0] - targetPos[0] < -1:
+            dirX += 1
+        elif currPos[0] - targetPos[0] > 1:
+            dirX -= 1
+
+    if maze.isEmptyTile(currPos[0] + dirX, currPos[1] + dirY): 
+        maze.setTile(NONE, currPos[0], currPos[1])
+        ghostOrange.move(dirX, dirY)
+        currPos = ghostOrange.getPos()
+        maze.setTile(ORNG, ghostOrange.getPos()[0], ghostOrange.getPos()[1])
+
 # Main game logic
 def main():
 
@@ -66,6 +90,9 @@ def main():
             pacman.move(x,y)
             currPos = pacman.getPos()
             maze.setTile(PACM, currPos[0], currPos[1])
+
+        # Move the NPCs
+        moveOrange(ghostOrange, pacman, maze)
     
         # Draw the map
         disp.fill(COLOR_BLACK)
