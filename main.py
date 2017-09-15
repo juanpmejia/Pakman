@@ -49,8 +49,9 @@ class Game():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     self.quit = 1
+                    
 
-
+    # Movement logic for the player
     def movePlayer(self):
         currPos = self.pacman.getPos()
         pressed = pygame.key.get_pressed()                     

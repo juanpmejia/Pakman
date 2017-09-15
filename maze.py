@@ -47,10 +47,6 @@ class Maze:
     def getWidth(self):
         return self.width
 
-    # Get the tilesize
-    def getSize(self):
-        return self.size
-
     # Get the contents of a tile
     def getTile(self, x, y):
         return self.gameMap[y][x]

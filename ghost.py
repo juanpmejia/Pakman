@@ -3,10 +3,9 @@ import pygame
 class Ghost:
 
 	# Initialization
-	def __init__(self, x, y, color, surface, sprite, size):
+	def __init__(self, x, y, surface, sprite, size):
 		self.x = x
 		self.y = y
-		self.color = color
 		self.surface = surface
 		self.size = size
 		self.sprite = pygame.transform.scale(pygame.image.load(sprite),(size,size))
