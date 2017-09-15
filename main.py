@@ -2,10 +2,11 @@ import sys
 import pygame
 from maze import *
 from pacman import *
+from ghost import *
 
-# Color constants
-BLACK = (0,0,0)
-BLUE = (0,0,255)
+# Some constants
+COLOR_BLACK = (0,0,0)
+COLOR_BLUE = (0,0,255)
 
 # Main game logic
 def main():
@@ -20,12 +21,19 @@ def main():
     tileSize = maze.getSize()
     disp = pygame.display.set_mode((maze.getWidth()*tileSize,maze.getHeight()*tileSize))
 
-    # Load assets
+    # Initialize players
     pacman = Pacman(1,1,disp,'Assets/pacman.png',tileSize)
-    ghostRed = pygame.transform.scale(pygame.image.load('Assets/red.png'),(tileSize,tileSize))
-    ghostOrange = pygame.transform.scale(pygame.image.load('Assets/orange.png'),(tileSize,tileSize))
-    ghostBlue = pygame.transform.scale(pygame.image.load('Assets/blue.png'),(tileSize,tileSize))
-    ghostPink = pygame.transform.scale(pygame.image.load('Assets/pink.png'),(tileSize,tileSize))
+    ghostRed = Ghost(3,21,RED,disp,'Assets/red.png',tileSize)
+    ghostBlue = Ghost(8,6,BLUE,disp,'Assets/blue.png',tileSize)
+    ghostPink = Ghost(11,21,PINK,disp,'Assets/pink.png',tileSize)
+    ghostOrange = Ghost(4,5,ORNG,disp,'Assets/orange.png',tileSize)
+
+    # Update map positions
+    maze.setTile(1,1,PACM)
+    maze.setTile(3,21,RED)
+    maze.setTile(8,6,BLUE)
+    maze.setTile(11,21,PINK)
+    maze.setTile(4,5,ORNG)
 
     # Initialize game variables
     quit = 0
@@ -61,30 +69,22 @@ def main():
                         pacman.move(x,y)
                         currPos = pacman.getPos()
                         maze.setTile(currPos[0], currPos[1], PACM)
-
+    
         # Draw the map
-        disp.fill(BLACK)
+        disp.fill(COLOR_BLACK)
 
         for row in range(maze.getHeight()):
-            offsetRow = row*tileSize
-            
+            offsetRow = row*tileSize            
             for column in range(maze.getWidth()):
                 offsetCol = column*tileSize
-
                 if maze.getTile(column, row) == WALL:            
-                    pygame.draw.rect(disp, BLUE, (offsetCol,offsetRow,tileSize,tileSize))     
-                
-                #temporary
-                elif maze.getTile(column, row) == RED:
-                    disp.blit(ghostRed,(offsetCol,offsetRow))
-                elif maze.getTile(column, row) == ORNG:
-                    disp.blit(ghostOrange,(offsetCol,offsetRow))
-                elif maze.getTile(column, row) == BLUE:
-                    disp.blit(ghostBlue,(offsetCol,offsetRow))
-                elif maze.getTile(column, row) == PINK:
-                    disp.blit(ghostPink,(offsetCol,offsetRow)) 
+                    pygame.draw.rect(disp, COLOR_BLUE, (offsetCol,offsetRow,tileSize,tileSize))     
 
         pacman.draw()
+        ghostRed.draw()
+        ghostBlue.draw()
+        ghostPink.draw()
+        ghostOrange.draw()
         pygame.display.update()
 
 main()
