@@ -9,6 +9,7 @@ class Ghost:
 		self.surface = surface
 		self.size = size
 		self.sprite = pygame.transform.scale(pygame.image.load(sprite),(size,size))
+		self.path = []
 
 	# Draw the sprite
 	def draw(self):
@@ -23,12 +24,6 @@ class Ghost:
 		self.x += x
 		self.y += y
 
-class GhostRed(Ghost):
-	# Initialization
-	def __init__(self, x, y, surface, sprite, size):
-		Ghost.__init__(self, x, y, surface, sprite, size)
-		self.path = []
-
 	def setPath(self, path):
 		self.path = path
 		# Remove start node
@@ -41,6 +36,11 @@ class GhostRed(Ghost):
 			dirX = next[0]-curr[0]
 			dirY = next[1]-curr[1]
 			return (dirX, dirY)
+
+class GhostRed(Ghost):
+	# Initialization
+	def __init__(self, x, y, surface, sprite, size):
+		Ghost.__init__(self, x, y, surface, sprite, size)
 
 class GhostOrange(Ghost):
 	# Initialization
@@ -57,16 +57,3 @@ class GhostOrange(Ghost):
 			self.currWp = 0
 		else:
 			self.currWp += 1
-
-	def setPath(self, path):
-		self.path = path
-		# Remove start node
-		self.path.pop()
-
-	def followPath(self):
-		if len(self.path) > 0:
-			curr = self.getPos()
-			next = self.path.pop()
-			dirX = next[0]-curr[0]
-			dirY = next[1]-curr[1]
-			return (dirX, dirY)

@@ -8,6 +8,7 @@ class Pacman:
 		self.y = y
 		self.surface = surface
 		self.size = size
+		self.dir = 0
 		self.sprite = pygame.transform.scale(pygame.image.load(sprite),(size,size))
 
 	# Draw the sprite

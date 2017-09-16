@@ -32,6 +32,7 @@ class Game():
         self.ghostBlue = Ghost(8,6,self.disp,'Assets/blue.png',TILESIZE)
         self.ghostPink = GhostRed(11,21,self.disp,'Assets/pink.png',TILESIZE)
         self.ghostOrange = GhostOrange(4,5,self.disp,'Assets/orange.png',TILESIZE)
+        self.dot = pygame.transform.scale(pygame.image.load('Assets/dot.png'),(TILESIZE-15,TILESIZE-15))
 
         # Update map positions
         self.maze.setTile(PACM, self.pacman.getPos()[0], self.pacman.getPos()[1])
@@ -148,6 +149,23 @@ class Game():
             currPos = self.ghostPink.getPos()
             self.maze.setTile(PINK, currPos[0], currPos[1])
 
+     # Movement logic for the blue ghost
+    def moveBlue(self):
+        currPos = self.ghostBlue.getPos()
+        targetPos = self.maze.countDots()
+
+        self.ghostBlue.setPath(astar(currPos, targetPos, self.maze))
+        dirX = dirY = 0
+        temp = self.ghostBlue.followPath()
+        if temp:
+            dirX = temp[0]
+            dirY = temp[1]
+
+        if self.maze.isEmptyTile(currPos[0] + dirX, currPos[1] + dirY): 
+            self.maze.setTile(NONE, currPos[0], currPos[1])
+            self.ghostBlue.move(dirX, dirY)
+            currPos = self.ghostBlue.getPos()
+            self.maze.setTile(BLUE, currPos[0], currPos[1])
     
     # Main game loop
     def mainLoop(self):
@@ -161,6 +179,7 @@ class Game():
             self.moveRed()
             self.movePink()
             self.moveOrange()
+            self.moveBlue()
         
             # Draw the map
             self.disp.fill(COLOR_BLACK)
@@ -171,7 +190,9 @@ class Game():
                     offsetCol = column*TILESIZE
 
                     if self.maze.getTile(column, row) == WALL:            
-                        pygame.draw.rect(self.disp, COLOR_BLUE, (offsetCol,offsetRow,TILESIZE,TILESIZE))     
+                        pygame.draw.rect(self.disp, COLOR_BLUE, (offsetCol,offsetRow,TILESIZE,TILESIZE)) 
+                    if self.maze.getTile(column, row) == DOTS:
+                        self.disp.blit(self.dot,(offsetCol+10,offsetRow+10))
 
             # Draw the sprites
             self.pacman.draw()
