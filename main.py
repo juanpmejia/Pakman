@@ -26,10 +26,10 @@ class Game():
 
         # Initialize players
         self.pacman = Pacman(1,1,self.disp,'Assets/pacman.png',TILESIZE)
-        self.ghostRed = Ghost(3,21,RED,self.disp,'Assets/red.png',TILESIZE)
-        self.ghostBlue = Ghost(8,6,BLUE,self.disp,'Assets/blue.png',TILESIZE)
-        self.ghostPink = Ghost(11,21,PINK,self.disp,'Assets/pink.png',TILESIZE)
-        self.ghostOrange = Ghost(4,5,ORNG,self.disp,'Assets/orange.png',TILESIZE)
+        self.ghostRed = Ghost(3,21,self.disp,'Assets/red.png',TILESIZE)
+        self.ghostBlue = Ghost(8,6,self.disp,'Assets/blue.png',TILESIZE)
+        self.ghostPink = Ghost(11,21,self.disp,'Assets/pink.png',TILESIZE)
+        self.ghostOrange = Ghost(4,5,self.disp,'Assets/orange.png',TILESIZE)
 
         # Update map positions
         self.maze.setTile(PACM, self.pacman.getPos()[0], self.pacman.getPos()[1])
