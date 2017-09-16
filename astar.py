@@ -37,8 +37,8 @@ def astar(start,goal,maze):
 
 	#Cost until any node from the start
 	gscore={}
-	for i in range (height):
-		for j in range (width):
+	for i in range (width):
+		for j in range (height):
 			gscore[(i,j)] = float('inf')
 
 	#Initialization
@@ -47,8 +47,8 @@ def astar(start,goal,maze):
 	#For each node, the total cost of getting from the start node to the goal
     #by passing by that node. That value is partly known, partly heuristic.
 	fscore={}
-	for i in range (height):
-		for j in range (width):
+	for i in range (width):
+		for j in range (height):
 			fscore[(i,j)] = float('inf')
 	#First estimate for f
 	fscore[start]=heuristic(start,goal)
@@ -71,13 +71,13 @@ def astar(start,goal,maze):
 
 		neighbors = []
 		# Add neighbors
-		if current[0]-1 > 0 and maze.getTile(current[0]-1, current[1]) != WALL:
+		if current[0]-1 >= 0 and maze.getTile(current[0]-1, current[1]) != WALL:
 			neighbors.append((current[0]-1, current[1]))
-		if current[1]-1 > 0 and maze.getTile(current[0], current[1]-1) != WALL:
+		if current[1]-1 >= 0 and maze.getTile(current[0], current[1]-1) != WALL:
 			neighbors.append((current[0], current[1]-1)	)
-		if current[0]+1 < height and maze.getTile(current[0]+1, current[1]) != WALL:
+		if current[0]+1 < width and maze.getTile(current[0]+1, current[1]) != WALL:
 			neighbors.append((current[0]+1, current[1]))
-		if current[1]+1 < width and maze.getTile(current[0], current[1]+1) != WALL:
+		if current[1]+1 < height and maze.getTile(current[0], current[1]+1) != WALL:
 			neighbors.append((current[0], current[1]+1))
 
 		for n in neighbors:

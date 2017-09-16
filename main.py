@@ -27,11 +27,11 @@ class Game():
         self.disp = pygame.display.set_mode((self.maze.getWidth()*TILESIZE,self.maze.getHeight()*TILESIZE))
 
         # Initialize players
-        self.pacman = Pacman(1,1,self.disp,'Assets/pacman.png',TILESIZE)
+        self.pacman = Pacman(28,1,self.disp,'Assets/pacman.png',TILESIZE)
         self.ghostRed = GhostRed(3,21,self.disp,'Assets/red.png',TILESIZE)
         self.ghostBlue = Ghost(8,6,self.disp,'Assets/blue.png',TILESIZE)
         self.ghostPink = GhostRed(11,21,self.disp,'Assets/pink.png',TILESIZE)
-        self.ghostOrange = Ghost(4,5,self.disp,'Assets/orange.png',TILESIZE)
+        self.ghostOrange = GhostOrange(4,5,self.disp,'Assets/orange.png',TILESIZE)
 
         # Update map positions
         self.maze.setTile(PACM, self.pacman.getPos()[0], self.pacman.getPos()[1])
@@ -95,6 +95,18 @@ class Game():
             elif currPos[0] - targetPos[0] > 1:
                 dirX -= 1
 
+        # Pacman not spotted
+        else:
+            targetPos = self.ghostOrange.getNextWp()
+            if currPos == targetPos:
+                self.ghostOrange.setNextWp()
+                targetPos = self.ghostOrange.getNextWp()
+            self.ghostOrange.setPath(astar(currPos, targetPos, self.maze))
+            temp = self.ghostOrange.followPath()
+            if temp:
+                dirX = temp[0]
+                dirY = temp[1]
+
         if self.maze.isEmptyTile(currPos[0] + dirX, currPos[1] + dirY): 
             self.maze.setTile(NONE, currPos[0], currPos[1])
             self.ghostOrange.move(dirX, dirY)
@@ -107,22 +119,34 @@ class Game():
         currPos = self.ghostRed.getPos()
         targetPos = self.pacman.getPos()
         self.ghostRed.setPath(astar(currPos, targetPos, self.maze))
-        self.maze.setTile(NONE, currPos[0], currPos[1])
-        #print self.ghostRed.path
-        self.ghostRed.followPath()
-        currPos = self.ghostRed.getPos()
-        self.maze.setTile(RED, currPos[0], currPos[1])
+        dirX = dirY = 0
+        temp = self.ghostRed.followPath()
+        if temp:
+            dirX = temp[0]
+            dirY = temp[1]
+
+        if self.maze.isEmptyTile(currPos[0] + dirX, currPos[1] + dirY): 
+            self.maze.setTile(NONE, currPos[0], currPos[1])
+            self.ghostRed.move(dirX, dirY)
+            currPos = self.ghostRed.getPos()
+            self.maze.setTile(RED, currPos[0], currPos[1])
 
     # Movement logic for the pink ghost
     def movePink(self):
         currPos = self.ghostPink.getPos()
         targetPos = self.pacman.getPos()
         self.ghostPink.setPath(astar(currPos, targetPos, self.maze))
-        self.maze.setTile(NONE, currPos[0], currPos[1])
-        #print self.ghostPink.path
-        self.ghostPink.followPath()
-        currPos = self.ghostPink.getPos()
-        self.maze.setTile(PINK, currPos[0], currPos[1])
+        dirX = dirY = 0
+        temp = self.ghostPink.followPath()
+        if temp:
+            dirX = temp[0]
+            dirY = temp[1]
+
+        if self.maze.isEmptyTile(currPos[0] + dirX, currPos[1] + dirY): 
+            self.maze.setTile(NONE, currPos[0], currPos[1])
+            self.ghostPink.move(dirX, dirY)
+            currPos = self.ghostPink.getPos()
+            self.maze.setTile(PINK, currPos[0], currPos[1])
 
     
     # Main game loop

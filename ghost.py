@@ -31,12 +31,42 @@ class GhostRed(Ghost):
 
 	def setPath(self, path):
 		self.path = path
+		# Remove start node
 		self.path.pop()
 
 	def followPath(self):
-		if len(self.path) > 1:
+		if len(self.path) > 0:
 			curr = self.getPos()
 			next = self.path.pop()
 			dirX = next[0]-curr[0]
 			dirY = next[1]-curr[1]
-			self.move(dirX, dirY)
+			return (dirX, dirY)
+
+class GhostOrange(Ghost):
+	# Initialization
+	def __init__(self, x, y, surface, sprite, size):
+		Ghost.__init__(self, x, y, surface, sprite, size)
+		self.waypoints = [(28,1), (28,21), (1,21), (1,1)]
+		self.currWp = 0
+
+	def getNextWp(self):
+		return self.waypoints[self.currWp]
+
+	def setNextWp(self):
+		if self.currWp == 3:
+			self.currWp = 0
+		else:
+			self.currWp += 1
+
+	def setPath(self, path):
+		self.path = path
+		# Remove start node
+		self.path.pop()
+
+	def followPath(self):
+		if len(self.path) > 0:
+			curr = self.getPos()
+			next = self.path.pop()
+			dirX = next[0]-curr[0]
+			dirY = next[1]-curr[1]
+			return (dirX, dirY)
