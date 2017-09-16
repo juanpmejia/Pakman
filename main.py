@@ -1,8 +1,10 @@
 import sys
 import pygame
+import random
 from maze import *
 from pacman import *
 from ghost import *
+from astar import *
 
 # Some constants
 COLOR_BLACK = (0,0,0)
@@ -79,12 +81,14 @@ class Game():
         targetPos = self.pacman.getPos()
         dirX = dirY = 0
 
+        # Pacman is in the same column
         if currPos[0] == targetPos[0]:
             if currPos[1] - targetPos[1] < -1:
                 dirY += 1
             elif currPos[1] - targetPos[1] > 1:
                 dirY -= 1
 
+        # Pacman is in the same row                
         elif currPos[1] == targetPos[1]:
             if currPos[0] - targetPos[0] < -1:
                 dirX += 1
@@ -97,6 +101,11 @@ class Game():
             currPos = self.ghostOrange.getPos()
             self.maze.setTile(ORNG, currPos[0], currPos[1])
 
+    # Movement logic for the red ghost
+    def moveRed(self):
+        currPos = self.ghostRed.getPos()
+        targetPos = self.pacman.getPos()
+        path = astar(currPos, targetPos, self.maze)
 
     # Main game loop
     def mainLoop(self):
@@ -107,6 +116,7 @@ class Game():
 
             # Player and NPC movement
             self.movePlayer()
+            self.moveRed()
             self.moveOrange()
         
             # Draw the map
