@@ -30,7 +30,7 @@ class Game():
         self.pacman = Pacman(1,1,self.disp,'Assets/pacman.png',TILESIZE)
         self.ghostRed = GhostRed(3,21,self.disp,'Assets/red.png',TILESIZE)
         self.ghostBlue = Ghost(8,6,self.disp,'Assets/blue.png',TILESIZE)
-        self.ghostPink = Ghost(11,21,self.disp,'Assets/pink.png',TILESIZE)
+        self.ghostPink = GhostRed(11,21,self.disp,'Assets/pink.png',TILESIZE)
         self.ghostOrange = Ghost(4,5,self.disp,'Assets/orange.png',TILESIZE)
 
         # Update map positions
@@ -110,8 +110,19 @@ class Game():
         self.maze.setTile(NONE, currPos[0], currPos[1])
         #print self.ghostRed.path
         self.ghostRed.followPath()
-        currPos = self.ghostOrange.getPos()
-        self.maze.setTile(ORNG, currPos[0], currPos[1])
+        currPos = self.ghostRed.getPos()
+        self.maze.setTile(RED, currPos[0], currPos[1])
+
+    # Movement logic for the pink ghost
+    def movePink(self):
+        currPos = self.ghostPink.getPos()
+        targetPos = self.pacman.getPos()
+        self.ghostPink.setPath(astar(currPos, targetPos, self.maze))
+        self.maze.setTile(NONE, currPos[0], currPos[1])
+        #print self.ghostPink.path
+        self.ghostPink.followPath()
+        currPos = self.ghostPink.getPos()
+        self.maze.setTile(PINK, currPos[0], currPos[1])
 
     
     # Main game loop
@@ -124,6 +135,7 @@ class Game():
             # Player and NPC movement
             self.movePlayer()
             self.moveRed()
+            self.movePink()
             self.moveOrange()
         
             # Draw the map
