@@ -12,10 +12,8 @@ class Pacman(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 
 		# Speed in pixels per cycle
-		self.speed = 10.0
-
-		# Direction (in degrees)
-		self.direction = 90
+		self.dx = 10
+		self.dy = 0
 
 		self.image = pygame.transform.scale(pygame.image.load(image).convert_alpha(), size)
 		self.rect = self.image.get_rect()
@@ -24,9 +22,8 @@ class Pacman(pygame.sprite.Sprite):
 
 	# Update the character's position
 	def update(self):
-		radians = math.radians(self.direction)
-		self.rect.x += self.speed * math.sin(radians)
-		self.rect.y -=	  self.speed * math.cos(radians)
+		self.rect.x += self.dx
+		self.rect.y += self.dy
 
 		if self.rect.left < 0:
 			self.rect.left = 0
@@ -43,11 +40,26 @@ class Pacman(pygame.sprite.Sprite):
 		pressed = pygame.key.get_pressed()   
 
 		if pressed[pygame.K_UP]:
-			self.direction = 0   
+			self.dx = 0
+			self.dy = -10
 		elif pressed[pygame.K_RIGHT]:
-			self.direction = 90
+			self.dx = 10
+			self.dy = 0
 		elif pressed[pygame.K_DOWN]:
-			self.direction = 180
+			self.dx = 0
+			self.dy = 10
 		elif pressed[pygame.K_LEFT]:
-			self.direction = 270
-		
+			self.dx = -10
+			self.dy = 0
+	
+	def checkCollision(self, rectObject):
+		if self.rect.colliderect(rectObject.rect):
+			if self.dx > 0:
+				self.rect.right = rectObject.rect.left
+			elif self.dx < 0:
+				self.rect.left = rectObject.rect.right
+			
+			elif self.dy > 0:
+				self.rect.bottom = rectObject.rect.top
+			elif self.dy < 0:
+				self.rect.top = rectObject.rect.bottom

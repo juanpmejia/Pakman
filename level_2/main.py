@@ -64,6 +64,9 @@ class Game():
 			self.checkEvents()
 			self.pacman.movePlayer()
 			self.allsprites.update()
+			self.pacman.checkCollision(self.obstacle1)
+			self.pacman.checkCollision(self.obstacle2)
+			self.pacman.checkCollision(self.obstacle3)
 			
 			# Draw Everything
 			self.allsprites.draw(self.screen)
