@@ -22,10 +22,6 @@ class Pacman(pygame.sprite.Sprite):
 		self.rect.x = 0
 		self.rect.y = 0
 
-	# Get the character's position
-	def getPos(self):
-		return (self.rect.x, self.rect.y)
-
 	# Update the character's position
 	def update(self):
 		radians = math.radians(self.direction)

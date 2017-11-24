@@ -1,11 +1,16 @@
 import sys
 import pygame
 from pacman import *
+from obstacle import *
 
 # Some constants
 DISPLAY_HEIGHT = 600
 DISPLAY_WIDTH = 800
+
 COLOR_BLACK = (0,0,0)
+COLOR_RED = (255,0,0)
+COLOR_GREEN = (0,255,0)
+COLOR_BLUE = (0,0,255)
 
 # Main game class
 class Game():
@@ -21,11 +26,19 @@ class Game():
 		# Initialize game screen
 		self.screen = pygame.display.set_mode([DISPLAY_WIDTH,DISPLAY_HEIGHT])
 
-		# Initialize players
+		# Initialize player
 		self.pacman = Pacman('../Assets/pacman.png', (50,50))
+
+		# Initialize obstacles
+		self.obstacle1 = Obstacle(COLOR_RED, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 3)
+		self.obstacle2 = Obstacle(COLOR_GREEN, DISPLAY_WIDTH / 3, DISPLAY_HEIGHT / 3 * 2)
+		self.obstacle3 = Obstacle(COLOR_BLUE, DISPLAY_WIDTH / 3 * 2, DISPLAY_HEIGHT / 3 * 2)
 
 		self.allsprites = pygame.sprite.Group()
 		self.allsprites.add(self.pacman)
+		self.allsprites.add(self.obstacle1)
+		self.allsprites.add(self.obstacle2)
+		self.allsprites.add(self.obstacle3)
 
 		self.mainLoop()
 
@@ -57,7 +70,7 @@ class Game():
 
 			# Flip the screen and show what we've drawn
 			pygame.display.flip()
-			
+
 
 pygame.init()
 Game()
