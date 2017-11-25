@@ -2,6 +2,7 @@ import sys
 import pygame
 from pacman import *
 from obstacle import *
+from powerup import *
 
 # Some constants
 DISPLAY_HEIGHT = 600
@@ -27,18 +28,20 @@ class Game():
 		self.screen = pygame.display.set_mode([DISPLAY_WIDTH,DISPLAY_HEIGHT])
 
 		# Initialize player
-		self.pacman = Pacman('../Assets/pacman.png', (50,50))
+		self.pacman = Pacman('../Assets/pacman.png', 50)
 
-		# Initialize obstacles
-		self.obstacle1 = Obstacle(COLOR_RED, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 3)
-		self.obstacle2 = Obstacle(COLOR_GREEN, DISPLAY_WIDTH / 3, DISPLAY_HEIGHT / 3 * 2)
-		self.obstacle3 = Obstacle(COLOR_BLUE, DISPLAY_WIDTH / 3 * 2, DISPLAY_HEIGHT / 3 * 2)
+		# Initialize objects
+		self.obstacle1 = Obstacle(COLOR_RED, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 3, 50)
+		self.obstacle2 = Obstacle(COLOR_GREEN, DISPLAY_WIDTH / 3, DISPLAY_HEIGHT / 3 * 2, 50)
+		self.obstacle3 = Obstacle(COLOR_BLUE, DISPLAY_WIDTH / 3 * 2, DISPLAY_HEIGHT / 3 * 2, 50)
+		self.powerup = Powerup('../Assets/cherry.png', 50)
 
 		self.allsprites = pygame.sprite.Group()
 		self.allsprites.add(self.pacman)
 		self.allsprites.add(self.obstacle1)
 		self.allsprites.add(self.obstacle2)
 		self.allsprites.add(self.obstacle3)
+		self.allsprites.add(self.powerup)
 
 		self.mainLoop()
 
@@ -63,11 +66,17 @@ class Game():
 
 			self.checkEvents()
 			self.pacman.movePlayer()
+			self.pacman.checkPowerup()
 			self.allsprites.update()
+
+			# Check for collisions
 			self.pacman.checkCollision(self.obstacle1)
 			self.pacman.checkCollision(self.obstacle2)
 			self.pacman.checkCollision(self.obstacle3)
-			
+			if self.powerup.alive() and self.pacman.checkCollision(self.powerup):
+				self.pacman.setPowerup(True)
+				self.powerup.kill()
+
 			# Draw Everything
 			self.allsprites.draw(self.screen)
 
