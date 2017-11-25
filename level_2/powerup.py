@@ -1,5 +1,4 @@
-import pygame
-import random
+import pygame, random
 
 # Some constants
 DISPLAY_HEIGHT = 600
