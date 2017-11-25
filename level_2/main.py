@@ -82,7 +82,7 @@ class Game():
 			# Clear the screen
 			self.screen.fill(COLOR_BLACK)
 
-			# Cinematic 10 fps
+			# FPS
 			self.clock.tick(30)
 			self.checkEvents()
 
@@ -104,6 +104,8 @@ class Game():
 				self.pacman.setPowerup(True)
 				self.powerup.setTimer()
 				self.powerup.kill()
+				self.ghosts[len(self.ghosts)-1].kill()
+				self.ghosts.pop()
 
 			# Draw Everything
 			self.allsprites.draw(self.screen)
