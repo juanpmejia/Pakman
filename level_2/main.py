@@ -63,19 +63,26 @@ class Game():
 
 			# Cinematic 10 fps
 			self.clock.tick(30)
-
 			self.checkEvents()
-			self.pacman.movePlayer()
+
+			if not(self.powerup.alive()) and self.powerup.checkRespawn():
+				self.powerup.respawn()
+				self.allsprites.add(self.powerup)
+
 			self.pacman.checkPowerup()
+			self.pacman.movePlayer()
 			self.allsprites.update()
 
 			# Check for collisions
 			self.pacman.checkCollision(self.obstacle1)
 			self.pacman.checkCollision(self.obstacle2)
 			self.pacman.checkCollision(self.obstacle3)
+
 			if self.powerup.alive() and self.pacman.checkCollision(self.powerup):
 				self.pacman.setPowerup(True)
+				self.powerup.setTimer()
 				self.powerup.kill()
+
 
 			# Draw Everything
 			self.allsprites.draw(self.screen)
