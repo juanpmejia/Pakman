@@ -9,6 +9,7 @@ DISPLAY_HEIGHT = 600
 DISPLAY_WIDTH = 800
 
 COLOR_BLACK = (0,0,0)
+COLOR_WHITE = (255,255,255)
 COLOR_RED = (255,0,0)
 COLOR_GREEN = (0,255,0)
 COLOR_BLUE = (0,0,255)
@@ -96,6 +97,12 @@ class Game():
 			self.allsprites.update()
 
 			# Check for collisions
+			for ghost in self.ghosts:
+				if self.pacman.checkCollision(ghost):
+					text = FONT.render("GAME OVER", True, COLOR_WHITE)
+					self.screen.blit(text, (DISPLAY_WIDTH / 2.5, DISPLAY_HEIGHT / 6 ))
+					self.quit = 1
+
 			self.pacman.checkCollision(self.obstacle1)
 			self.pacman.checkCollision(self.obstacle2)
 			self.pacman.checkCollision(self.obstacle3)
@@ -113,8 +120,10 @@ class Game():
 			# Flip the screen and show what we've drawn
 			pygame.display.flip()
 
-
 pygame.init()
+FONT = pygame.font.SysFont("monospace", 30)
 Game()
-pygame.quit()
-sys.exit()
+event = pygame.event.wait()
+if event.type == pygame.QUIT or event.type == pygame.KEYDOWN:
+	pygame.quit()
+	sys.exit()
