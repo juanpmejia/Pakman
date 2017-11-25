@@ -5,7 +5,7 @@ DISPLAY_HEIGHT = 600
 DISPLAY_WIDTH = 800
 
 class Ghost(pygame.sprite.Sprite):
-	def __init__(self, image, size, x, y):
+	def __init__(self, image, size, x, y, leadership):
 		pygame.sprite.Sprite.__init__(self)
 
 		self.image = pygame.transform.scale(pygame.image.load(image).convert_alpha(), (size,size))
@@ -15,13 +15,33 @@ class Ghost(pygame.sprite.Sprite):
 
 		self.velocityX = random.randint(1, 10) / 10.0
 		self.velocityY = random.randint(1, 10) / 10.0
-		self.maxVelocity = 10
+		self.maxVelocity = 5
+
+		self.leadership = leadership
+
+	def isLeader(self):
+		return self.leadership
 
 	# Return the distance from another ghost
 	def distance(self, ghost):
 		distX = self.rect.x - ghost.rect.x
 		distY = self.rect.y - ghost.rect.y        
 		return math.sqrt(distX * distX + distY * distY)
+
+	# Move closer to a target
+	def chase(self, target):
+		# calculate the average distances from the other ghosts
+		avgX = 0
+		avgY = 0
+
+		avgX += (self.rect.x - target.rect.x)
+		avgY += (self.rect.y - target.rect.y)
+
+		# set our velocity towards the others
+		distance = math.sqrt((avgX * avgX) + (avgY * avgY)) * -1.0
+	   
+		self.velocityX -= (avgX / 100) 
+		self.velocityY -= (avgY / 100) 
 
 	# Move closer to a set of ghosts
 	def moveCloser(self, ghosts):
@@ -96,15 +116,16 @@ class Ghost(pygame.sprite.Sprite):
 		
 	# Perform actual movement based on our velocity
 	def move(self):
+		border = 25
 
-		if self.rect.left < 0 and self.velocityX < 0:
+		if self.rect.left < border and self.velocityX < 0:
 			self.velocityX = -self.velocityX * random.random()
-		if self.rect.right > DISPLAY_WIDTH and self.velocityX > 0:
+		if self.rect.right > DISPLAY_WIDTH - border and self.velocityX > 0:
 			self.velocityX = -self.velocityX * random.random()
 
-		if self.rect.top < 0 and self.velocityY < 0:
+		if self.rect.top < border and self.velocityY < 0:
 			self.velocityY = -self.velocityY * random.random()
-		elif self.rect.bottom > DISPLAY_HEIGHT and self.velocityY > 0:
+		elif self.rect.bottom > DISPLAY_HEIGHT - border and self.velocityY > 0:
 			self.velocityY = -self.velocityY * random.random()
 		
 		if abs(self.velocityX) > self.maxVelocity or abs(self.velocityY) > self.maxVelocity:
@@ -114,3 +135,7 @@ class Ghost(pygame.sprite.Sprite):
 		
 		self.rect.x += self.velocityX
 		self.rect.y += self.velocityY
+
+	def checkCollision(self, spriteObject):
+		if pygame.sprite.collide_rect(self, spriteObject):
+			return True

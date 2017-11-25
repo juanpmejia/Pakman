@@ -24,7 +24,7 @@ class Game():
 		# Initialize game variables
 		self.clock = pygame.time.Clock()
 		self.quit = 0
-		self.numGhosts = 10
+		self.numGhosts = 5
 		self.ghosts = []
 		self.allsprites = pygame.sprite.Group()
 
@@ -45,9 +45,13 @@ class Game():
 		self.allsprites.add(self.obstacle3)
 		self.allsprites.add(self.powerup)
 
+		# Initialize leader
+		self.ghosts.append(Ghost('../Assets/red.png', 40, random.randint(DISPLAY_WIDTH / 3, DISPLAY_WIDTH), random.randint(DISPLAY_HEIGHT / 3, DISPLAY_HEIGHT), True))   
+		self.allsprites.add(self.ghosts[0])
+
 		# Initialize ghosts
 		for i in range(self.numGhosts):
-			self.ghosts.append(Ghost('../Assets/blue.png', 30, random.randint(0, DISPLAY_WIDTH), random.randint(0, DISPLAY_HEIGHT)))   
+			self.ghosts.append(Ghost('../Assets/blue.png', 30, random.randint(0, DISPLAY_WIDTH), random.randint(0, DISPLAY_HEIGHT), False))   
 			self.allsprites.add(self.ghosts[len(self.ghosts)-1])
 
 		self.mainLoop()
@@ -61,20 +65,25 @@ class Game():
 				if event.key == pygame.K_q:
 					self.quit = 1
 
+	def leaderControl(self):
+		self.ghosts[0].chase(self.pacman)
+		self.ghosts[0].move()
+
 	def flockControl(self):
 		for ghost in self.ghosts:
-			closeGhosts = []
-			for otherGhost in self.ghosts:
-				if otherGhost == ghost: continue
+			if not(ghost.isLeader()):
+				closeGhosts = []
+				for otherGhost in self.ghosts:
+					if otherGhost == ghost: continue
 
-				distance = ghost.distance(otherGhost)
-				if distance < 200:
-					closeGhosts.append(otherGhost)
-			
-			ghost.moveCloser(closeGhosts)
-			ghost.moveWith(closeGhosts)  
-			ghost.moveAway(closeGhosts, 20)  
-			ghost.move()
+					distance = ghost.distance(otherGhost)
+					if distance < 200:
+						closeGhosts.append(otherGhost)
+				
+				ghost.chase(self.ghosts[0])
+				ghost.moveWith(closeGhosts)  
+				ghost.moveAway(closeGhosts, 30)  
+				ghost.move()
 								
 	# Main game loop
 	def mainLoop(self):
@@ -93,6 +102,7 @@ class Game():
 
 			self.pacman.checkPowerup()
 			self.pacman.movePlayer()
+			self.leaderControl()
 			self.flockControl()
 			self.allsprites.update()
 
@@ -107,12 +117,24 @@ class Game():
 			self.pacman.checkCollision(self.obstacle2)
 			self.pacman.checkCollision(self.obstacle3)
 
-			if self.powerup.alive() and self.pacman.checkCollision(self.powerup):
-				self.pacman.setPowerup(True)
-				self.powerup.setTimer()
-				self.powerup.kill()
-				self.ghosts[len(self.ghosts)-1].kill()
-				self.ghosts.pop()
+			if self.powerup.alive():
+				if self.pacman.checkCollision(self.powerup):
+					self.pacman.setPowerup(True)
+					self.powerup.setTimer()
+					self.powerup.kill()
+					self.ghosts[len(self.ghosts)-1].kill()
+					self.ghosts.pop()
+				elif self.ghosts[0].checkCollision(self.powerup):
+					self.powerup.setTimer()
+					self.powerup.kill()
+					self.ghosts.append(Ghost('../Assets/blue.png', 30, random.randint(0, DISPLAY_WIDTH), random.randint(0, DISPLAY_HEIGHT), False))   
+					self.allsprites.add(self.ghosts[len(self.ghosts)-1])					
+
+			# Check victory conditions
+			if len(self.ghosts) == 1:
+				text = FONT.render("YOU WIN", True, COLOR_WHITE)
+				self.screen.blit(text, (DISPLAY_WIDTH / 2.5, DISPLAY_HEIGHT / 6 ))
+				self.quit = 1
 
 			# Draw Everything
 			self.allsprites.draw(self.screen)
